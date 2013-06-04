@@ -1,27 +1,11 @@
-Pivotal HD 
-===========
+How to Compile
+===============
 
-In this document we explain various components and services of Pivotal HD, a Hadoop implementation from Greenplum.
+Download docbook xslt from [docbook-xsl-1.78.1](http://sourceforge.net/projects/docbook/files/docbook-xsl/1.78.1/)
 
+Assuming xmlproc tool is available in your path, from the root directory of openstack-content project run
 
-Getting Started
---------------
-This section is for new bees to Hadoop. It walks through the installation and gives an overview of hadoop with simple examples.
-
-
-
-Deep Dive
---------
-This section is for advanced users. 
-
-
-How to use
-----------
-Clone and do the following to get the site up and running.
-
-```ruby
-bundle install
-nanoc compile
-nanoc view
+```bash
+xsltproc --xinclude --nonet ../docbook-xsl-1.78.1/html/docbook.xsl openstack.xml > output/public/openstack.html
 ```
 
