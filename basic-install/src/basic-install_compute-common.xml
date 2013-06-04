@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+    xml:id="basic-install_compute-common">
+                <title>Common services</title>
+          	<section xml:id="compute-os">
+        <title>Operating System</title>
+        <orderedlist>
+            <listitem>
+                <para>Install <phrase os="rhel;centos;fedora">Fedora 18</phrase>
+                    <phrase os="ubuntu">Ubuntu 12.04</phrase>. Just like with the Cloud Controller, the exact steps are outside the
+                    scope of this document, but please note the following options:<itemizedlist>
+                        <listitem>
+                            <para>Time zone: <emphasis role="bold">UTC</emphasis></para>
+                        </listitem>
+                        <listitem>
+                            <para>Hostname: <emphasis role="bold">c01</emphasis></para>
+                        </listitem>
+                        <listitem>
+                            <para>Packages: <emphasis role="bold">OpenSSH-Server</emphasis></para>
+                        </listitem>
+                    </itemizedlist></para>
+                <para>Once installation has finished, the server will reboot.</para>
+            </listitem>
+            <listitem>
+                <para os="ubuntu">Since the default OpenStack release in Ubuntu 12.04 LTS is older,
+                    we are going to use the Ubuntu Cloud Archive for Grizzly:
+                        <screen><prompt>#</prompt> <userinput>apt-get install ubuntu-cloud-keyring</userinput></screen>
+                    Edit <emphasis role="bold">/etc/apt/sources.list.d/cloud-archive.list</emphasis>:
+                        <programlisting>deb http://ubuntu-cloud.archive.canonical.com/ubuntu precise-updates/grizzly main</programlisting>
+                    Upgrade the system (and reboot if you need):
+                        <screen><prompt>#</prompt> <userinput>sudo apt-get update &amp;&amp; apt-get upgrade</userinput></screen>
+                </para>
+                <para os="rhel;centos;fedora">Use the Fedora repositories for Grizzly:
+                    <screen><prompt>#</prompt> <userinput>wget http://repos.fedorapeople.org/repos/openstack/openstack-grizzly/fedora-openstack-grizzly.repo</userinput>
+<prompt>#</prompt> <userinput>yum install http://repos.fedorapeople.org/repos/openstack/openstack-grizzly/rdo-release-grizzly-1.noarch.rpm </userinput></screen>
+                </para>
+            </listitem>
+            <listitem>
+                <para>Configure the network:</para>
+                <note>
+                    <para>This will change later on in the guide
+                        when Open vSwitch is configured</para>
+                </note>
+                <para os="ubuntu">
+                    <itemizedlist>
+                        <listitem>
+                            <para>Edit <emphasis role="bold">/etc/network/interfaces</emphasis>:</para>
+                    <programlisting># Internal Network
+auto eth0
+    iface eth0 inet static
+    address 10.10.10.11
+    netmask 255.255.255.0
+    gateway 10.10.10.9
+    dns-nameservers 8.8.8.8
+</programlisting>
+                        </listitem>
+                    </itemizedlist>                    
+                </para>
+                    <itemizedlist os="ubuntu">
+                        <listitem>
+                            <para>Edit <emphasis role="bold">/etc/sysctl.conf</emphasis>:
+                            <programlisting>net.ipv4.conf.all.rp_filter = 0
+net.ipv4.conf.default.rp_filter = 0</programlisting>
+                                Then, restart the network service:
+                                <screen><userinput>service networking restart</userinput></screen>
+                            </para>
+                        </listitem>
+                    </itemizedlist>
+        
+                    <itemizedlist os="rhel;centos;fedora">
+                        <listitem>
+                            <para>Set up old ethernet nic device names:</para>
+                            <para>
+                                <screen><prompt>#</prompt> <userinput>sed -i 's/# GOTO="netdevicename_end"/GOTO="netdevicename_end"/g'/lib/udev/rules.d/71-biosdevname.rules</userinput></screen>
+                            </para>
+                            <para>Edit <emphasis role="bold">/etc/sysconf/network-scripts/ifcfg-eth0</emphasis>:</para>
+                        <programlisting># Internal Network
+DEVICE=eth0
+TYPE=Ethernet
+BOOTPROTO=static
+IPADDR=10.10.10.11
+NETMASK=255.255.255.0
+GATEWAY=10.10.10.9
+DNS1=8.8.8.8
+DEFROUTE=yes
+ONBOOT=yes
+    </programlisting>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                Reboot.
+                            </para>
+                        </listitem>
+                    </itemizedlist>
+                    <itemizedlist>
+                        <listitem>
+                            <para>Edit the <emphasis role="bold">/etc/hosts</emphasis> file and add
+                                    <emphasis role="bold">cloud</emphasis>, 
+                                    <emphasis role="bold">network</emphasis> and 
+                                    <emphasis role="bold">c01</emphasis> hostnames with correct IP.
+                    <programlisting>127.0.0.1       localhost
+10.10.10.10     cloud
+10.10.10.9      network
+10.10.10.11     c01</programlisting>
+                </para>
+                        </listitem>
+                    </itemizedlist>
+                
+            </listitem>
+            <listitem>
+                <para>Install NTP:
+                    <itemizedlist>
+                            <listitem>
+                                <para> 
+                                    <screen os="ubuntu;deb"><prompt>#</prompt> <userinput>apt-get install ntp</userinput></screen>
+                                    <screen os="rhel;fedora;centos"><prompt>#</prompt><userinput>yum install ntp</userinput></screen>
+                                </para>
+                            </listitem>
+                    </itemizedlist></para>
+            </listitem>
+        </orderedlist>
+    </section>
+</section>
