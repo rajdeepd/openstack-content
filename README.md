@@ -8,6 +8,7 @@ Assuming xmlproc tool is available in your path, from the root directory of open
 ```bash
 xsltproc --xinclude --nonet ../docbook-xsl-1.78.1/html/docbook.xsl openstack.xml > output/public/openstack.html
 ```
+Assumption : docbook-xsl-1.78.1 is available in directory .. where you cloned rajdeepd/openstack-contet
 
 Output html file is openstack.html in folder `output/public/openstack.html`
 
